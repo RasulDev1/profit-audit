@@ -1,17 +1,34 @@
 @import "tailwindcss";
 
-body {
-  background: #f8fafc;
-  color: #0f172a;
+:root {
+  color-scheme: light;
 }
 
-.report h1, .report h2, .report h3, .report h4 { font-weight: 600; margin: 1.5rem 0 0.5rem; font-size: 1.125rem; }
+body {
+  background:
+    radial-gradient(1200px 500px at 10% -10%, #e0e7ff 0%, transparent 60%),
+    radial-gradient(900px 400px at 100% 0%, #ccfbf1 0%, transparent 55%),
+    #f8fafc;
+  background-repeat: no-repeat;
+  color: #0f172a;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.report h1, .report h2, .report h3, .report h4 { font-weight: 600; margin: 2rem 0 0.75rem; font-size: 1.2rem; color: #0f172a; }
 .report h4:first-child, .report h3:first-child { margin-top: 0; }
-.report p { margin: 0.5rem 0; line-height: 1.65; }
-.report ul, .report ol { margin: 0.5rem 0; padding-left: 1.25rem; }
+.report p { margin: 0.6rem 0; line-height: 1.7; color: #334155; }
+.report ul, .report ol { margin: 0.75rem 0; padding-left: 1.25rem; color: #334155; }
 .report ul { list-style: disc; }
 .report ol { list-style: decimal; }
-.report li { margin: 0.35rem 0; line-height: 1.6; }
-.report strong { font-weight: 600; }
-.report table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.875rem; }
-.report th, .report td { border: 1px solid #e2e8f0; padding: 0.4rem 0.6rem; text-align: left; }
+.report li { margin: 0.5rem 0; line-height: 1.65; padding-left: 0.25rem; }
+.report li::marker { color: #94a3b8; }
+.report strong { font-weight: 600; color: #0f172a; }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+  main { padding: 0 !important; }
+  .grid { display: block !important; }
+  article, section, div { box-shadow: none !important; }
+}

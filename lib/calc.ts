@@ -10,6 +10,8 @@ export interface AuditInput {
   conversionPct: number;
   clientBase?: number;
   comment?: string;
+  /** Что у клиента уже налажено: такие пункты не считаются потерями. */
+  done?: { leads?: boolean; repeat?: boolean; leak?: boolean };
 }
 
 type Parsed = { ok: true; data: AuditInput } | { ok: false; error: string };
@@ -42,6 +44,13 @@ export function parseAuditInput(raw: unknown): Parsed {
     return { ok: false, error: "Комментарий должен быть не длиннее 2000 символов" };
   }
 
+  let done: AuditInput["done"];
+  if (r.done !== undefined) {
+    if (!r.done || typeof r.done !== "object") return { ok: false, error: "Некорректные данные о налаженных процессах" };
+    const d = r.done as Record<string, unknown>;
+    done = { leads: d.leads === true, repeat: d.repeat === true, leak: d.leak === true };
+  }
+
   return {
     ok: true,
     data: {
@@ -53,6 +62,7 @@ export function parseAuditInput(raw: unknown): Parsed {
       conversionPct: conversionPct as number,
       clientBase: clientBase as number | undefined,
       comment: r.comment as string | undefined,
+      done,
     },
   };
 }
@@ -128,7 +138,11 @@ export function calculateLosses(input: AuditInput): LossResult {
     coefficient: niche.leak,
   };
 
-  const items = [leads, repeat, leak];
+  // Налаженные клиентом процессы не дают потерь.
+  const DONE_TEXT = "по вашим словам, это уже налажено";
+  const items = [leads, repeat, leak].map((item) =>
+    input.done?.[item.key] ? { ...item, monthlyProfit: 0, assumption: DONE_TEXT } : item,
+  );
   const totalMonthly = items.reduce((s, i) => s + i.monthlyProfit, 0);
   const shareOfProfit = monthlyGrossProfit > 0 ? totalMonthly / monthlyGrossProfit : 0;
   const severity = shareOfProfit < 0.05 ? "небольшие" : shareOfProfit < 0.15 ? "заметные" : "существенные";

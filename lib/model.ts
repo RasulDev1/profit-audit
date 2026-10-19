@@ -71,6 +71,10 @@ export interface Coefficient {
 export interface Niche {
   id: NicheId;
   label: string;
+  icon: string;
+  /** Подписи вопросов «что уже налажено». */
+  repeatDone: string;
+  leakDone: string;
   /** Доля клиентской базы, которая дополнительно вернётся за год благодаря напоминаниям. */
   repeat: Coefficient;
   repeatLossTitle: string;
@@ -83,6 +87,7 @@ export interface Niche {
 export interface Method {
   id: MethodId;
   label: string;
+  icon: string;
   /** Доля входящих заявок, которые остаются без ответа. */
   lostLeads: Coefficient;
 }
@@ -106,6 +111,9 @@ export const NICHES: Niche[] = [
   {
     id: "auto",
     label: "Автосервис",
+    icon: "🚗",
+    repeatDone: "Напоминаем клиентам о ТО и сезонных работах",
+    leakDone: "Запчасти всегда попадают в заказ-наряд",
     repeat: REMINDERS,
     repeatLossTitle: "Нет напоминаний о ТО и сезонных работах",
     leak: estimate(0.015, "исследований по неучтённым запчастям не нашлось, взята осторожная оценка"),
@@ -115,6 +123,9 @@ export const NICHES: Niche[] = [
   {
     id: "ecommerce",
     label: "Интернет-магазин",
+    icon: "🛒",
+    repeatDone: "Делаем рассылки по базе покупателей",
+    leakDone: "Отправляем напоминания о брошенных корзинах",
     repeat: estimate(0.05, "исследований эффекта повторных рассылок с долей вернувшихся покупателей не нашлось; оценка ниже, чем для напоминаний (8%)"),
     repeatLossTitle: "Нет повторных продаж по базе покупателей",
     leak: CHECKOUT,
@@ -123,7 +134,10 @@ export const NICHES: Niche[] = [
   },
   {
     id: "services",
-    label: "Услуги с записью (салон, клиника, студия)",
+    label: "Салон, клиника, студия",
+    icon: "💇",
+    repeatDone: "Напоминаем клиентам о повторной записи",
+    leakDone: "Подтверждаем записи накануне визита",
     repeat: REMINDERS,
     repeatLossTitle: "Клиенты не возвращаются на повторную запись",
     leak: {
@@ -137,6 +151,9 @@ export const NICHES: Niche[] = [
   {
     id: "realty",
     label: "Недвижимость",
+    icon: "🏠",
+    repeatDone: "Регулярно связываемся с клиентами после сделки",
+    leakDone: "У каждой сделки есть дата следующего контакта",
     repeat: estimate(0.02, "сделки редкие, поэтому взята низкая оценка; исследований не нашлось"),
     repeatLossTitle: "Нет работы с базой после сделки (рекомендации, повторные сделки)",
     leak: estimate(0.02, "исследований по сделкам, потерянным без follow-up, не нашлось"),
@@ -145,7 +162,10 @@ export const NICHES: Niche[] = [
   },
   {
     id: "b2b",
-    label: "B2B / оптовые продажи",
+    label: "B2B и опт",
+    icon: "📦",
+    repeatDone: "Регулярно связываемся с текущими клиентами",
+    leakDone: "После каждого КП звоним клиенту",
     repeat: estimate(0.05, "исследований не нашлось; оценка ниже эффекта напоминаний (8%)"),
     repeatLossTitle: "Нет регулярных касаний с текущими клиентами",
     leak: estimate(0.02, "исследований по КП без follow-up не нашлось"),
@@ -154,7 +174,10 @@ export const NICHES: Niche[] = [
   },
   {
     id: "construction",
-    label: "Строительство и ремонт",
+    label: "Стройка и ремонт",
+    icon: "🔨",
+    repeatDone: "Поддерживаем связь с прошлыми клиентами",
+    leakDone: "Материалы и доп. работы учитываются по каждому объекту",
     repeat: estimate(0.02, "ремонт делают редко, поэтому взята низкая оценка; исследований не нашлось"),
     repeatLossTitle: "Нет работы с базой: рекомендации и повторные заказы",
     leak: {
@@ -167,7 +190,10 @@ export const NICHES: Niche[] = [
   },
   {
     id: "education",
-    label: "Онлайн-школа / курсы",
+    label: "Онлайн-школа",
+    icon: "🎓",
+    repeatDone: "Предлагаем выпускникам следующий курс",
+    leakDone: "Напоминаем о незавершённой оплате",
     repeat: estimate(0.05, "исследований по повторным покупкам курсов не нашлось; оценка ниже эффекта напоминаний (8%)"),
     repeatLossTitle: "Выпускники не покупают следующий курс",
     leak: CHECKOUT,
@@ -176,7 +202,10 @@ export const NICHES: Niche[] = [
   },
   {
     id: "food",
-    label: "Общепит и доставка еды",
+    label: "Общепит и доставка",
+    icon: "🍽️",
+    repeatDone: "Есть программа лояльности и рассылки гостям",
+    leakDone: "Отслеживаем время и точность каждого заказа",
     repeat: estimate(0.05, "исследований с долей вернувшихся гостей не нашлось; оценка ниже эффекта напоминаний (8%)"),
     repeatLossTitle: "Гости не возвращаются: нет программы возврата",
     leak: estimate(0.02, "опросы показывают частые ошибки в доставке, но без доли выручки; взята осторожная оценка"),
@@ -186,6 +215,9 @@ export const NICHES: Niche[] = [
   {
     id: "other",
     label: "Другое",
+    icon: "💼",
+    repeatDone: "Регулярно предлагаем клиентам повторные покупки",
+    leakDone: "Задачи между сотрудниками передаются через общую систему",
     repeat: estimate(0.05, "общая осторожная оценка, ниже эффекта напоминаний (8%)"),
     repeatLossTitle: "Нет работы с базой на повторные продажи",
     leak: estimate(0.02, "общая осторожная оценка"),
@@ -203,13 +235,14 @@ const MANUAL_LOST_LEADS: Coefficient = {
 };
 
 export const METHODS: Method[] = [
-  { id: "memory", label: "В голове / без учёта", lostLeads: MANUAL_LOST_LEADS },
-  { id: "notebook", label: "Бумажный блокнот или журнал", lostLeads: MANUAL_LOST_LEADS },
-  { id: "excel", label: "Excel / Google Таблицы", lostLeads: MANUAL_LOST_LEADS },
-  { id: "messengers", label: "Чаты в Telegram / WhatsApp", lostLeads: MANUAL_LOST_LEADS },
-  { id: "excel_messengers", label: "Excel + мессенджеры", lostLeads: MANUAL_LOST_LEADS },
+  { id: "memory", icon: "🧠", label: "В голове / без учёта", lostLeads: MANUAL_LOST_LEADS },
+  { id: "notebook", icon: "📓", label: "Бумажный блокнот или журнал", lostLeads: MANUAL_LOST_LEADS },
+  { id: "excel", icon: "📊", label: "Excel / Google Таблицы", lostLeads: MANUAL_LOST_LEADS },
+  { id: "messengers", icon: "💬", label: "Чаты в Telegram / WhatsApp", lostLeads: MANUAL_LOST_LEADS },
+  { id: "excel_messengers", icon: "📊💬", label: "Excel + мессенджеры", lostLeads: MANUAL_LOST_LEADS },
   {
     id: "partial_crm",
+    icon: "🗂️",
     label: "CRM есть, но используется частично",
     lostLeads: estimate(0.08, "исследований для компаний с частично внедрённой CRM не нашлось; взята половина нижней границы (16%)"),
   },

@@ -7,6 +7,9 @@ import {
   ECONOMICS,
   MAIN_LOSS,
   NO_LOSS,
+  ALREADY_DONE,
+  NOTHING_LOST,
+  NOTHING_TO_FIX,
   METHOD_TEXT,
   NICHE_TEXT,
   OBSERVATIONS,
@@ -95,7 +98,9 @@ export function buildReport(input: AuditInput, result: LossResult): string {
   const point = (item: LossItem) =>
     hasLoss(item)
       ? `**${item.title}.** ${cause(item)} ${fill(pick(AMOUNT), { sum: rub(item.monthlyProfit), assumption: item.assumption })}`
-      : `**${item.title}.** ${fill(pick(NO_LOSS), { assumption: item.assumption })}`;
+      : input.done?.[item.key]
+        ? `**${item.title}.** ${pick(ALREADY_DONE)}`
+        : `**${item.title}.** ${fill(pick(NO_LOSS), { assumption: item.assumption })}`;
 
   const fix = (item: LossItem) => pick(niche.fix[item.key]);
   const startStep = (item: LossItem) => (item.key === "leak" ? pick(niche.leakStart) : pick(START_STEP[item.key]));
@@ -108,27 +113,30 @@ export function buildReport(input: AuditInput, result: LossResult): string {
     pick(method.analysis),
     "",
     ...(observations.length ? [observations.join(" "), ""] : []),
-    fill(pick(SEVERITY_TEXT[result.severity]), vars),
-    "",
-    fill(pick(MAIN_LOSS), { share: pct(mainShare), title: main.title }),
-    "",
+    ...(active.length
+      ? [fill(pick(SEVERITY_TEXT[result.severity]), vars), "", fill(pick(MAIN_LOSS), { share: pct(mainShare), title: main.title }), ""]
+      : [pick(NOTHING_LOST), ""]),
     "#### ⚠️ 3 критические точки потери прибыли",
     "",
     ...items.map((item, i) => `${i + 1}. ${point(item)}`),
     "",
     "#### 🛠️ Инженерное решение проблемы",
     "",
-    pick(SOLUTION_INTRO),
-    "",
-    ...active.map((item) => `- ${fix(item)}`),
-    "",
-    pick(method.migration),
-    "",
-    fill(pick(ECONOMICS[result.severity]), vars),
-    "",
-    pick(START_INTRO),
-    "",
-    ...active.map((item, i) => `${i + 1}. ${startStep(item)}`),
+    ...(active.length
+      ? [
+          pick(SOLUTION_INTRO),
+          "",
+          ...active.map((item) => `- ${fix(item)}`),
+          "",
+          pick(method.migration),
+          "",
+          fill(pick(ECONOMICS[result.severity]), vars),
+          "",
+          pick(START_INTRO),
+          "",
+          ...active.map((item, i) => `${i + 1}. ${startStep(item)}`),
+        ]
+      : [pick(NOTHING_TO_FIX)]),
   ];
 
   return lines.join("\n");

@@ -32,7 +32,7 @@
 | Ниша | Доля выручки | Основа |
 |---|---|---|
 | Интернет-магазин, онлайн-школа | 3,9% | [Baymard, 2025](https://baymard.com/lists/cart-abandonment-rate): бросают 70,22% корзин, то есть ≈2,4 брошенной корзины на заказ. [Klaviyo, 2024](https://www.klaviyo.com/marketing-resources/abandoned-cart-benchmarks): напоминание приводит к заказу 3,33% получателей. 2,4 × 3,33% ≈ 7,8%, берём половину, потому что контакт есть не у всех. |
-| Услуги с записью | 1,5% | [Treatwell, 2025](https://scratchmagazine.co.uk/news/beauty-salon-no-shows-uk-locations-highest-rates): неявки ≈2,7–3,1% записей, предоплата снижает их вдвое. |
+| Салон, клиника, студия | 1,5% | [Treatwell, 2025](https://scratchmagazine.co.uk/news/beauty-salon-no-shows-uk-locations-highest-rates): неявки ≈2,7–3,1% записей, предоплата снижает их вдвое. |
 | Строительство | 2,5% | [Liu et al., 2018; Oyewobi et al., 2011](https://repository.aaup.edu/bitstream/123456789/1715/1/Rework%20investigation%20in%20construction%20projects.pdf): переделки стоят около 5% проекта. Учёт закрывает не все причины переделок, поэтому берём половину. |
 | Автосервис | 1,5% | Экспертная оценка: исследований по неучтённым запчастям не нашлось. |
 | Недвижимость, B2B, общепит, другое | 2% | Экспертная оценка. |
