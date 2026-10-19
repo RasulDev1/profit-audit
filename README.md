@@ -41,3 +41,7 @@ npm run dev
 ## Коэффициенты
 
 Коэффициенты в `lib/model.ts` взяты из исследований, где они есть: UIS 2026, Workato 2026, Cochrane 2018, Baymard 2025, Klaviyo 2024, Treatwell 2025. Остальные — осторожная экспертная оценка, и на сайте она так и подписана. Источник каждого коэффициента показывается рядом с расчётом, полный разбор лежит в [docs/sources.md](docs/sources.md).
+
+## Кнопка Telegram
+
+На экране результата внизу закреплена кнопка «Обсудить в Telegram». Чтобы она вела к вам, задайте переменную `NEXT_PUBLIC_TELEGRAM_USERNAME` (ник без @) в Vercel: Settings → Environment Variables, затем Redeploy.

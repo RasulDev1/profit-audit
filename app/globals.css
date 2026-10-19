@@ -55,7 +55,51 @@ body {
 .report li::marker { color: #818cf8; }
 .report strong { font-weight: 600; color: #fff; }
 
-input[type="checkbox"] { accent-color: #6366f1; }
+/* Ползунок: толстая полоса и крупный бегунок, чтобы попадать пальцем */
+.range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 0.875rem;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6 var(--p), rgba(255, 255, 255, 0.1) var(--p));
+  touch-action: pan-y;
+  cursor: pointer;
+}
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: #fff;
+  border: 0;
+  box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.range::-moz-range-thumb {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: #fff;
+  border: 0;
+  box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.range:focus-visible { outline: 2px solid #818cf8; outline-offset: 6px; }
+
+/* Длинный аудит прокручивается внутри своего блока, тень внизу подсказывает, что текст продолжается */
+.report-scroll {
+  mask-image: linear-gradient(#000 85%, transparent);
+}
+@media (min-width: 640px) {
+  .report-scroll { mask-image: none; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-in { animation: fade-in 0.35s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { animation: none; }
+}
 
 @media print {
   .no-print, .backdrop { display: none !important; }
@@ -65,4 +109,5 @@ input[type="checkbox"] { accent-color: #6366f1; }
   .print-light { background: #fff !important; color: #0f172a !important; box-shadow: none !important; border: 0 !important; }
   .print-light * { color: #0f172a !important; }
   .report p, .report li { color: #1e293b !important; }
+  .report-scroll { max-height: none !important; overflow: visible !important; mask-image: none !important; }
 }
