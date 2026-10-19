@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+body {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.report h1, .report h2, .report h3, .report h4 { font-weight: 600; margin: 1.5rem 0 0.5rem; font-size: 1.125rem; }
+.report h4:first-child, .report h3:first-child { margin-top: 0; }
+.report p { margin: 0.5rem 0; line-height: 1.65; }
+.report ul, .report ol { margin: 0.5rem 0; padding-left: 1.25rem; }
+.report ul { list-style: disc; }
+.report ol { list-style: decimal; }
+.report li { margin: 0.35rem 0; line-height: 1.6; }
+.report strong { font-weight: 600; }
+.report table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.875rem; }
+.report th, .report td { border: 1px solid #e2e8f0; padding: 0.4rem 0.6rem; text-align: left; }
