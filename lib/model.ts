@@ -1,7 +1,16 @@
 // Справочники ниш и способов учёта. Все коэффициенты — отраслевые допущения,
 // а не измеренные данные клиента; их стоит уточнять по мере накопления аудитов.
 
-export type NicheId = "auto" | "ecommerce" | "services" | "realty" | "b2b" | "other";
+export type NicheId =
+  | "auto"
+  | "ecommerce"
+  | "services"
+  | "realty"
+  | "b2b"
+  | "construction"
+  | "education"
+  | "food"
+  | "other";
 export type MethodId = "memory" | "notebook" | "excel" | "messengers" | "excel_messengers" | "partial_crm";
 
 export interface Niche {
@@ -70,6 +79,33 @@ export const NICHES: Niche[] = [
     leakRate: 0.02,
     leakTitle: "Зависшие КП и сделки без следующего шага",
     leakExplain: "доля выручки, которая теряется на КП без follow-up",
+  },
+  {
+    id: "construction",
+    label: "Строительство и ремонт",
+    repeatUplift: 0.03,
+    repeatLossTitle: "Нет работы с базой: рекомендации и повторные заказы",
+    leakRate: 0.03,
+    leakTitle: "Перерасход материалов и неучтённые доп. работы",
+    leakExplain: "доля выручки, которая теряется на неучтённых материалах и доп. работах",
+  },
+  {
+    id: "education",
+    label: "Онлайн-школа / курсы",
+    repeatUplift: 0.07,
+    repeatLossTitle: "Выпускники не покупают следующий курс",
+    leakRate: 0.03,
+    leakTitle: "Брошенные оплаты и недожатые заявки",
+    leakExplain: "доля выручки, которая теряется на неоплаченных заявках и брошенных оплатах",
+  },
+  {
+    id: "food",
+    label: "Общепит и доставка еды",
+    repeatUplift: 0.1,
+    repeatLossTitle: "Гости не возвращаются: нет программы возврата",
+    leakRate: 0.02,
+    leakTitle: "Ошибки и задержки в заказах",
+    leakExplain: "доля выручки, которая теряется на компенсациях, возвратах и отменах",
   },
   {
     id: "other",

@@ -1,5 +1,5 @@
-// Общий код браузера и функции Supabase: без внешних зависимостей, импорты с .ts.
-import { METHODS, NICHES, methodById, nicheById, type MethodId, type NicheId } from "./model.ts";
+// Проверка данных формы и расчёт потерь. Выполняется в браузере.
+import { METHODS, NICHES, methodById, nicheById, type MethodId, type NicheId } from "./model";
 
 export interface AuditInput {
   niche: NicheId;
@@ -78,7 +78,7 @@ export interface LossResult {
 }
 
 const rub = (n: number) => `${Math.round(n).toLocaleString("ru-RU")} ₽`;
-const pct = (n: number) => `${+(n * 100).toFixed(1)}%`;
+const pct = (n: number) => `${(n * 100).toLocaleString("ru-RU", { maximumFractionDigits: 1 })}%`;
 
 export function calculateLosses(input: AuditInput): LossResult {
   const niche = nicheById(input.niche);
@@ -94,7 +94,7 @@ export function calculateLosses(input: AuditInput): LossResult {
   const leads: LossItem = {
     key: "leads",
     title: "Заявки без ответа или без продолжения",
-    assumption: `${pct(method.lostLeadShare)} из ${input.leadsPerMonth} заявок (≈${lostLeads.toFixed(0)}) теряются, конверсия ${pct(conversion)}`,
+    assumption: `${pct(method.lostLeadShare)} из ${input.leadsPerMonth.toLocaleString("ru-RU")} заявок (≈${lostLeads.toFixed(0)}) теряются, конверсия ${pct(conversion)}`,
     monthlyProfit: lostLeads * conversion * input.avgCheck * margin,
   };
 

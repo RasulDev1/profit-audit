@@ -11,26 +11,10 @@ permissions:
   id-token: write
 
 concurrency:
-  group: deploy
+  group: pages
   cancel-in-progress: true
 
 jobs:
-  supabase:
-    name: Supabase function
-    runs-on: ubuntu-latest
-    env:
-      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: supabase/setup-cli@v1
-        with:
-          version: latest
-      - name: Set Anthropic key
-        run: supabase secrets set --project-ref "$SUPABASE_PROJECT_REF" ANTHROPIC_API_KEY="${{ secrets.ANTHROPIC_API_KEY }}"
-      - name: Deploy function
-        run: supabase functions deploy audit --project-ref "$SUPABASE_PROJECT_REF" --use-api
-
   pages:
     name: GitHub Pages
     runs-on: ubuntu-latest
@@ -49,7 +33,9 @@ jobs:
       - run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
-          NEXT_PUBLIC_AUDIT_URL: https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co/functions/v1/audit
+          # Необязательно: без них аудиты не сохраняются в Supabase.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
