@@ -6,6 +6,7 @@ import {
   AMOUNT,
   ECONOMICS,
   MAIN_LOSS,
+  NO_LOSS,
   METHOD_TEXT,
   NICHE_TEXT,
   OBSERVATIONS,
@@ -67,7 +68,8 @@ export function buildReport(input: AuditInput, result: LossResult): string {
     observe(input.clientBase! > ordersPerYear * 2, OBSERVATIONS.bigBase);
   }
   observe(input.conversionPct < 25, OBSERVATIONS.lowConversion);
-  observe(input.conversionPct >= 70, OBSERVATIONS.highConversion);
+  observe(input.conversionPct >= 100, OBSERVATIONS.perfectConversion);
+  observe(input.conversionPct >= 70 && input.conversionPct < 100, OBSERVATIONS.highConversion);
   observe(input.marginPct < 20, OBSERVATIONS.lowMargin);
   observe(input.marginPct >= 50, OBSERVATIONS.highMargin);
   observe(input.leadsPerMonth >= 1000, OBSERVATIONS.manyLeads);
@@ -82,7 +84,18 @@ export function buildReport(input: AuditInput, result: LossResult): string {
       ? `${pick(method.leadsCause)} ${pick(niche.leadsWhy)}`
       : item.key === "repeat"
         ? `${pick(method.repeatCause)} ${pick(niche.repeatWhy)}`
-        : `${pick(niche.leakWhy)} ${pick(method.leakCause)}`;
+        : // В нишах, где утечка не связана с ручным учётом (корзины, неявки, оплаты), причина из способа учёта не подходит.
+          ["ecommerce", "services", "education"].includes(input.niche)
+          ? pick(niche.leakWhy)
+          : `${pick(niche.leakWhy)} ${pick(method.leakCause)}`;
+
+  // Пункт без потерь (например, заявки при 100% конверсии) не требует решения.
+  const hasLoss = (item: LossItem) => item.monthlyProfit >= 1;
+  const active = items.filter(hasLoss);
+  const point = (item: LossItem) =>
+    hasLoss(item)
+      ? `**${item.title}.** ${cause(item)} ${fill(pick(AMOUNT), { sum: rub(item.monthlyProfit), assumption: item.assumption })}`
+      : `**${item.title}.** ${fill(pick(NO_LOSS), { assumption: item.assumption })}`;
 
   const fix = (item: LossItem) => pick(niche.fix[item.key]);
   const startStep = (item: LossItem) => (item.key === "leak" ? pick(niche.leakStart) : pick(START_STEP[item.key]));
@@ -101,19 +114,13 @@ export function buildReport(input: AuditInput, result: LossResult): string {
     "",
     "#### ⚠️ 3 критические точки потери прибыли",
     "",
-    ...items.map(
-      (item, i) =>
-        `${i + 1}. **${item.title}.** ${cause(item)} ${fill(pick(AMOUNT), {
-          sum: rub(item.monthlyProfit),
-          assumption: item.assumption,
-        })}`,
-    ),
+    ...items.map((item, i) => `${i + 1}. ${point(item)}`),
     "",
     "#### 🛠️ Инженерное решение проблемы",
     "",
     pick(SOLUTION_INTRO),
     "",
-    ...items.map((item) => `- ${fix(item)}`),
+    ...active.map((item) => `- ${fix(item)}`),
     "",
     pick(method.migration),
     "",
@@ -121,7 +128,7 @@ export function buildReport(input: AuditInput, result: LossResult): string {
     "",
     pick(START_INTRO),
     "",
-    ...items.map((item, i) => `${i + 1}. ${startStep(item)}`),
+    ...active.map((item, i) => `${i + 1}. ${startStep(item)}`),
   ];
 
   return lines.join("\n");

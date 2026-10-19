@@ -3,7 +3,7 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { METHODS, NICHES } from "@/lib/model";
+import { METHODS, NICHES, SOURCES } from "@/lib/model";
 import { calculateLosses, parseAuditInput, pct, type LossResult } from "@/lib/calc";
 import { buildReport } from "@/lib/report";
 import { saveAudit } from "@/lib/supabase";
@@ -116,12 +116,29 @@ export default function AuditForm() {
                   <div>
                     <p className="font-medium text-slate-900">{i.title}</p>
                     <p className="text-sm text-slate-500">{i.assumption}</p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      {i.coefficient.sources.length > 0 ? (
+                        <>
+                          Основа: {i.coefficient.basis}. Источник:{" "}
+                          {i.coefficient.sources.map((id, n) => (
+                            <span key={id}>
+                              {n > 0 && "; "}
+                              <a href={SOURCES[id].url} target="_blank" rel="noreferrer" className="underline hover:text-slate-600">
+                                {SOURCES[id].title}
+                              </a>
+                            </span>
+                          ))}
+                        </>
+                      ) : (
+                        <>Экспертная оценка: {i.coefficient.basis}.</>
+                      )}
+                    </p>
                   </div>
                   <p className="whitespace-nowrap font-medium text-slate-900">{rub(i.monthlyProfit)}</p>
                 </li>
               ))}
             </ul>
-            <p className="mt-3 text-xs text-slate-400">Расчёт опирается на отраслевые допущения и уточняется по вашим реальным данным.</p>
+            <p className="mt-3 text-xs text-slate-400">Коэффициенты взяты из исследований, где они есть, остальные — осторожная экспертная оценка. Точнее всего расчёт будет по вашим реальным данным.</p>
           </div>
         )}
         {report && (

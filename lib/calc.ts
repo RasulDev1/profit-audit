@@ -1,5 +1,5 @@
 // Проверка данных формы и расчёт потерь. Выполняется в браузере.
-import { METHODS, NICHES, methodById, nicheById, type MethodId, type NicheId } from "./model";
+import { METHODS, NICHES, methodById, nicheById, type Coefficient, type MethodId, type NicheId } from "./model";
 
 export interface AuditInput {
   niche: NicheId;
@@ -62,6 +62,7 @@ export interface LossItem {
   title: string;
   assumption: string;
   monthlyProfit: number;
+  coefficient: Coefficient;
 }
 
 export interface LossResult {
@@ -90,32 +91,41 @@ export function calculateLosses(input: AuditInput): LossResult {
   const monthlyRevenue = ordersPerMonth * input.avgCheck;
   const monthlyGrossProfit = monthlyRevenue * margin;
 
-  const lostLeads = input.leadsPerMonth * method.lostLeadShare;
+  // Заявки без ответа никогда не становятся заказом, поэтому теряются только среди тех,
+  // кто не купил: доля потерь применяется к некупившим. При 100% конверсии терять нечего.
+  // Если на такую заявку ответить, считаем, что она купит с обычной конверсией бизнеса.
+  const lostLeads = input.leadsPerMonth * (1 - conversion) * method.lostLeads.value;
   const leads: LossItem = {
     key: "leads",
     title: "Заявки без ответа или без продолжения",
-    assumption: `${pct(method.lostLeadShare)} из ${input.leadsPerMonth.toLocaleString("ru-RU")} заявок (≈${lostLeads.toFixed(0)}) теряются, конверсия ${pct(conversion)}`,
+    assumption:
+      lostLeads >= 0.5
+        ? `≈${Math.round(lostLeads).toLocaleString("ru-RU")} из ${input.leadsPerMonth.toLocaleString("ru-RU")} заявок в месяц остаются без ответа (${pct(method.lostLeads.value)} от тех, кто не купил), при ответе купили бы ${pct(conversion)}`
+        : `при конверсии ${pct(conversion)} все заявки уже доходят до продажи`,
     monthlyProfit: lostLeads * conversion * input.avgCheck * margin,
+    coefficient: method.lostLeads,
   };
 
-  // Без данных о базе берём клиентов, пришедших за последний год.
+  // Без данных о базе берём половину заказов за год: часть заказов делают одни и те же клиенты.
   const clientBaseEstimated = input.clientBase === undefined || input.clientBase === 0;
-  const base = clientBaseEstimated ? Math.round(ordersPerMonth * 12) : input.clientBase!;
-  const returnedPerYear = base * niche.repeatUplift;
+  const base = clientBaseEstimated ? Math.round(ordersPerMonth * 12 * 0.5) : input.clientBase!;
+  const returnedPerYear = base * niche.repeat.value;
   const repeat: LossItem = {
     key: "repeat",
     title: niche.repeatLossTitle,
-    assumption: `+${pct(niche.repeatUplift)} возвратов в год из базы ${base.toLocaleString("ru-RU")} клиентов${clientBaseEstimated ? " (оценка по заказам за год)" : ""}`,
+    assumption: `+${pct(niche.repeat.value)} возвратов в год из базы ${base.toLocaleString("ru-RU")} клиентов${clientBaseEstimated ? " (оценка: половина заказов за год)" : ""}`,
     monthlyProfit: (returnedPerYear / 12) * input.avgCheck * margin,
+    coefficient: niche.repeat,
   };
 
-  const leakRate = niche.leakRate * method.leakMultiplier;
+  const leakRate = niche.leak.value;
   const leak: LossItem = {
     key: "leak",
     title: niche.leakTitle,
     assumption: `${pct(leakRate)} от выручки ${rub(monthlyRevenue)}: ${niche.leakExplain}`,
     // Утечка уже не попала в выручку, поэтому считаем её с маржой.
     monthlyProfit: monthlyRevenue * leakRate * margin,
+    coefficient: niche.leak,
   };
 
   const items = [leads, repeat, leak];
