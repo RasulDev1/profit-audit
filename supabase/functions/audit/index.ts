@@ -5,7 +5,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.118.0";
 import { calculateLosses, parseAuditInput } from "../_shared/calc.ts";
 import { SYSTEM_PROMPT, buildUserMessage } from "../_shared/prompt.ts";
 
-const MODEL = "claude-opus-5-5";
+const MODEL = "claude-haiku-5-5";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -44,11 +44,7 @@ Deno.serve(async (req) => {
     model: MODEL,
     max_tokens: 16000,
     thinking: { type: "adaptive" },
-    // low укладывается в лимит времени edge-функций на бесплатном тарифе.
-    output_config: { effort: "low" },
-    // При отказе классификатора запрос повторяется на рекомендованной модели.
-    betas: ["server-side-fallback-2026-07-01"],
-    fallbacks: "default",
+    output_config: { effort: "medium" },
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: buildUserMessage(input, result) }],
   });
