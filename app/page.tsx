@@ -14,6 +14,17 @@ export default function Home() {
         <p className="mt-3 max-w-2xl text-slate-600 sm:text-lg">
           Укажите нишу, способ учёта и четыре цифры. Сервис посчитает скрытые потери по данным исследований и подготовит аудит с планом действий.
         </p>
+        <p className="mt-5 flex max-w-2xl items-start gap-3 rounded-2xl bg-white/80 px-4 py-3 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200">
+          <span className="text-lg leading-none">📚</span>
+          <span>
+            <strong className="font-semibold text-slate-900">Расчёт основан на открытых исследованиях</strong> Cochrane, Baymard Institute, UIS и других.
+            У каждой цифры указан{" "}
+            <a href="https://github.com/RasulDev1/profit-audit/blob/main/docs/sources.md" target="_blank" rel="noreferrer" className="underline hover:text-slate-900">
+              источник
+            </a>
+            .
+          </span>
+        </p>
       </header>
       <AuditForm />
     </main>
