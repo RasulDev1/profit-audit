@@ -3,8 +3,10 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { METHODS, NICHES } from "@/lib/model";
-import type { LossResult } from "@/lib/calc";
+import { METHODS, NICHES } from "@/supabase/functions/_shared/model.ts";
+import { calculateLosses, parseAuditInput, type LossResult } from "@/supabase/functions/_shared/calc.ts";
+
+const AUDIT_URL = process.env.NEXT_PUBLIC_AUDIT_URL;
 
 const rub = (n: number) => `${Math.round(n).toLocaleString("ru-RU")} ₽`;
 
@@ -33,15 +35,27 @@ export default function AuditForm() {
       comment: String(f.get("comment") ?? "") || undefined,
     };
 
-    setLoading(true);
+    const parsed = parseAuditInput(payload);
     setError(null);
-    setResult(null);
     setReport("");
+    if (!parsed.ok) {
+      setResult(null);
+      setError(parsed.error);
+      return;
+    }
+    // Расчёт выполняется сразу в браузере, текст аудита приходит из функции Supabase.
+    setResult(calculateLosses(parsed.data));
+    if (!AUDIT_URL) {
+      setError("Генерация текста не настроена: не задан NEXT_PUBLIC_AUDIT_URL");
+      return;
+    }
+
+    setLoading(true);
     try {
-      const res = await fetch("/api/audit", {
+      const res = await fetch(AUDIT_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(parsed.data),
       });
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
@@ -50,17 +64,16 @@ export default function AuditForm() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
-      let headerParsed = false;
+      let headerSkipped = false;
       for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
         buffer += decoder.decode(value, { stream: true });
-        if (!headerParsed) {
+        if (!headerSkipped) {
           const nl = buffer.indexOf("\n");
           if (nl === -1) continue;
-          setResult(JSON.parse(buffer.slice(0, nl)).result);
           buffer = buffer.slice(nl + 1);
-          headerParsed = true;
+          headerSkipped = true;
         }
         setReport(buffer);
       }

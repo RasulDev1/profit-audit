@@ -1,5 +1,5 @@
-import { methodById, nicheById } from "./model";
-import { pct, rub, type AuditInput, type LossResult } from "./calc";
+import { methodById, nicheById } from "./model.ts";
+import { pct, rub, type AuditInput, type LossResult } from "./calc.ts";
 
 export const SYSTEM_PROMPT = `Ты — опытный, прагматичный бизнес-аналитик, архитектор CRM-систем и эксперт по автоматизации B2B-процессов. Твоя цель — составить честный, объективный и глубокий аудит скрытых потерь для предпринимателя на основе предоставленных им данных.
 

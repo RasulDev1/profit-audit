@@ -1,0 +1,3 @@
+# Функция открыта без входа: её вызывает публичная страница на GitHub Pages.
+[functions.audit]
+verify_jwt = false

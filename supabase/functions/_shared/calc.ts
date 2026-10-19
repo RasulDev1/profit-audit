@@ -1,18 +1,61 @@
-import { z } from "zod";
-import { METHODS, NICHES, methodById, nicheById, type MethodId, type NicheId } from "./model";
+// Общий код браузера и функции Supabase: без внешних зависимостей, импорты с .ts.
+import { METHODS, NICHES, methodById, nicheById, type MethodId, type NicheId } from "./model.ts";
 
-export const auditInputSchema = z.object({
-  niche: z.enum(NICHES.map((n) => n.id) as [NicheId, ...NicheId[]]),
-  method: z.enum(METHODS.map((m) => m.id) as [MethodId, ...MethodId[]]),
-  leadsPerMonth: z.number().int().min(1).max(1_000_000),
-  avgCheck: z.number().min(1).max(1_000_000_000),
-  marginPct: z.number().min(1).max(100),
-  conversionPct: z.number().min(1).max(100),
-  clientBase: z.number().int().min(0).max(10_000_000).optional(),
-  comment: z.string().max(2000).optional(),
-});
+export interface AuditInput {
+  niche: NicheId;
+  method: MethodId;
+  leadsPerMonth: number;
+  avgCheck: number;
+  marginPct: number;
+  conversionPct: number;
+  clientBase?: number;
+  comment?: string;
+}
 
-export type AuditInput = z.infer<typeof auditInputSchema>;
+type Parsed = { ok: true; data: AuditInput } | { ok: false; error: string };
+
+/** Проверяет данные формы. Возвращает текст первой ошибки на русском. */
+export function parseAuditInput(raw: unknown): Parsed {
+  if (!raw || typeof raw !== "object") return { ok: false, error: "Пустой запрос" };
+  const r = raw as Record<string, unknown>;
+  const num = (key: string, label: string, min: number, max: number, int = false): number | string => {
+    const v = r[key];
+    if (typeof v !== "number" || !Number.isFinite(v)) return `Укажите «${label}» числом`;
+    if (int && !Number.isInteger(v)) return `«${label}» должно быть целым числом`;
+    if (v < min || v > max) return `«${label}» должно быть от ${min} до ${max.toLocaleString("ru-RU")}`;
+    return v;
+  };
+
+  if (!NICHES.some((n) => n.id === r.niche)) return { ok: false, error: "Выберите нишу" };
+  if (!METHODS.some((m) => m.id === r.method)) return { ok: false, error: "Выберите способ учёта" };
+
+  const leadsPerMonth = num("leadsPerMonth", "Заявок в месяц", 1, 1_000_000, true);
+  const avgCheck = num("avgCheck", "Средний чек", 1, 1_000_000_000);
+  const marginPct = num("marginPct", "Маржа", 1, 100);
+  const conversionPct = num("conversionPct", "Конверсия", 1, 100);
+  const clientBase = r.clientBase === undefined ? undefined : num("clientBase", "Клиентов в базе", 0, 10_000_000, true);
+  for (const v of [leadsPerMonth, avgCheck, marginPct, conversionPct, clientBase]) {
+    if (typeof v === "string") return { ok: false, error: v };
+  }
+
+  if (r.comment !== undefined && (typeof r.comment !== "string" || r.comment.length > 2000)) {
+    return { ok: false, error: "Комментарий должен быть не длиннее 2000 символов" };
+  }
+
+  return {
+    ok: true,
+    data: {
+      niche: r.niche as NicheId,
+      method: r.method as MethodId,
+      leadsPerMonth: leadsPerMonth as number,
+      avgCheck: avgCheck as number,
+      marginPct: marginPct as number,
+      conversionPct: conversionPct as number,
+      clientBase: clientBase as number | undefined,
+      comment: r.comment as string | undefined,
+    },
+  };
+}
 
 export interface LossItem {
   key: "leads" | "repeat" | "leak";
