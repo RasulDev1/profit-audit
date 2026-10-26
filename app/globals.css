@@ -32,21 +32,90 @@ body {
   background: #cddcfd;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
+/* Двойной ползунок: два накладываются друг на друга, ловят касание только бегунки */
+.dual-range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   margin: 0;
+  background: transparent;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
 }
-input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
+.dual-range::-webkit-slider-runnable-track {
+  height: 44px;
+  background: transparent;
 }
+.dual-range::-moz-range-track {
+  height: 44px;
+  background: transparent;
+}
+.dual-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  pointer-events: auto;
+  width: 28px;
+  height: 28px;
+  margin-top: 8px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 2px solid #2563eb;
+  box-shadow: 0 2px 8px rgb(15 23 42 / 0.25);
+  cursor: grab;
+  transition: transform 0.15s ease-out;
+}
+.dual-range::-moz-range-thumb {
+  box-sizing: border-box;
+  pointer-events: auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 2px solid #2563eb;
+  box-shadow: 0 2px 8px rgb(15 23 42 / 0.25);
+  cursor: grab;
+  transition: transform 0.15s ease-out;
+}
+.dual-range:active::-webkit-slider-thumb { transform: scale(1.12); cursor: grabbing; }
+.dual-range:active::-moz-range-thumb { transform: scale(1.12); cursor: grabbing; }
+.dual-range:focus-visible::-webkit-slider-thumb { outline: 3px solid rgb(37 99 235 / 0.35); }
+.dual-range:focus-visible::-moz-range-thumb { outline: 3px solid rgb(37 99 235 / 0.35); }
 
 @keyframes fade-in {
   from { opacity: 0.5; transform: translateY(4px); }
   to { opacity: 1; transform: none; }
 }
 .fade-in { animation: fade-in 0.35s ease-out both; }
+
+/* Глянцевый блик по блоку прироста, когда собрана полная экосистема */
+@keyframes shimmer {
+  from { transform: translateX(-120%) skewX(-20deg); }
+  to { transform: translateX(300%) skewX(-20deg); }
+}
+.shimmer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 35%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.4), transparent);
+  animation: shimmer 1.1s ease-out 1 both;
+}
+
+/* Мягкая синяя вспышка карточки «Физика синергии» */
+@keyframes flash {
+  0% { box-shadow: 0 0 0 0 rgb(37 99 235 / 0.45), 0 1px 2px rgb(15 23 42 / 0.04); border-color: #e2e8f0; background-color: #fff; }
+  35% { box-shadow: 0 0 0 5px rgb(37 99 235 / 0.16), 0 0 40px rgb(37 99 235 / 0.35); border-color: #2563eb; background-color: #eff4ff; }
+  100% { box-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 24px -12px rgb(15 23 42 / 0.12); border-color: #e2e8f0; background-color: #fff; }
+}
+.flash { animation: flash 1.5s ease-out 1; }
+
 @media (prefers-reduced-motion: reduce) {
-  .fade-in { animation: none; }
+  .fade-in, .shimmer, .flash { animation: none; }
+  .shimmer { display: none; }
 }

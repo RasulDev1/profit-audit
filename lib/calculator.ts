@@ -68,6 +68,12 @@ export const DEFAULT_INPUTS: RangeInputs = {
   baseConversion: { from: 8, to: 12 },
 };
 
+export const SLIDER_LIMITS: Record<keyof Inputs, { min: number; max: number; step: number }> = {
+  leadsPerDay: { min: 1, max: 100, step: 1 },
+  averageCheck: { min: 500, max: 50000, step: 500 },
+  baseConversion: { min: 1, max: 30, step: 0.5 },
+};
+
 export const TRACKING_REVENUE_MULTIPLIER = 1.1;
 
 export function calculate(inputs: Inputs, tools: ToolState): Result {
@@ -112,6 +118,11 @@ export function formatNumber(value: number): string {
   return Math.round(value)
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
+export function formatSigned(value: number): string {
+  const rounded = Math.round(value);
+  return `${rounded > 0 ? "+" : ""}${formatNumber(rounded)}`;
 }
 
 export function formatRub(value: number): string {
