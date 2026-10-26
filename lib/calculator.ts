@@ -38,6 +38,18 @@ export type Inputs = {
   baseConversion: number;
 };
 
+export type Range = {
+  from: number;
+  to: number;
+};
+
+export type RangeInputs = Record<keyof Inputs, Range>;
+
+export type RangeResult = {
+  low: Result;
+  high: Result;
+};
+
 export type Result = {
   currentLeads: number;
   newLeads: number;
@@ -49,10 +61,10 @@ export type Result = {
   gainPercent: number;
 };
 
-export const DEFAULT_INPUTS: Inputs = {
-  leadsPerDay: 20,
-  averageCheck: 5000,
-  baseConversion: 10,
+export const DEFAULT_INPUTS: RangeInputs = {
+  leadsPerDay: { from: 15, to: 25 },
+  averageCheck: { from: 4000, to: 6000 },
+  baseConversion: { from: 8, to: 12 },
 };
 
 export function calculate(inputs: Inputs, tools: ToolState): Result {
@@ -81,6 +93,18 @@ export function calculate(inputs: Inputs, tools: ToolState): Result {
   };
 }
 
+export function calculateRange(inputs: RangeInputs, tools: ToolState): RangeResult {
+  const pick = (side: "low" | "high"): Inputs => {
+    const value = (r: Range) => (side === "low" ? Math.min(r.from, r.to) : Math.max(r.from, r.to));
+    return {
+      leadsPerDay: value(inputs.leadsPerDay),
+      averageCheck: value(inputs.averageCheck),
+      baseConversion: value(inputs.baseConversion),
+    };
+  };
+  return { low: calculate(pick("low"), tools), high: calculate(pick("high"), tools) };
+}
+
 export function formatNumber(value: number): string {
   return Math.round(value)
     .toString()
@@ -93,4 +117,8 @@ export function formatRub(value: number): string {
 
 export function formatPercent(fraction: number): string {
   return `${(Math.round(fraction * 1000) / 10).toString().replace(".", ",")}%`;
+}
+
+export function formatSpan(low: string, high: string): string {
+  return low === high ? low : `${low}–${high}`;
 }
