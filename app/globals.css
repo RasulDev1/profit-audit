@@ -10,104 +10,35 @@
 }
 
 body {
-  background: #07070c;
-  color: #e2e8f0;
+  background: #07090c;
+  color: #f4f4f5;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Сетка и свечение на фоне */
 .backdrop {
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(600px 400px at 15% -5%, rgba(99, 102, 241, 0.28), transparent 70%),
-    radial-gradient(500px 350px at 90% 5%, rgba(34, 211, 238, 0.16), transparent 70%),
-    radial-gradient(700px 500px at 50% 110%, rgba(139, 92, 246, 0.14), transparent 70%);
-}
-.backdrop::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 75%);
+  background: radial-gradient(ellipse at top right, rgba(16, 185, 129, 0.12), transparent 55%);
 }
 
-.text-gradient {
-  background: linear-gradient(90deg, #a5b4fc 0%, #c4b5fd 45%, #67e8f9 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.report h1, .report h2, .report h3, .report h4 { font-weight: 600; margin: 2rem 0 0.75rem; font-size: 1.15rem; color: #fff; letter-spacing: -0.01em; }
-.report h4:first-child, .report h3:first-child { margin-top: 0; }
-.report p { margin: 0.6rem 0; line-height: 1.75; color: #cbd5e1; }
-.report ul, .report ol { margin: 0.75rem 0; padding-left: 1.25rem; color: #cbd5e1; }
-.report ul { list-style: disc; }
-.report ol { list-style: decimal; }
-.report li { margin: 0.5rem 0; line-height: 1.7; padding-left: 0.25rem; }
-.report li::marker { color: #818cf8; }
-.report strong { font-weight: 600; color: #fff; }
-
-/* Ползунок: толстая полоса и крупный бегунок, чтобы попадать пальцем */
-.range {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
-  appearance: none;
-  height: 0.875rem;
-  border-radius: 9999px;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6 var(--p), rgba(255, 255, 255, 0.1) var(--p));
-  touch-action: pan-y;
-  cursor: pointer;
+  margin: 0;
 }
-.range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 9999px;
-  background: #fff;
-  border: 0;
-  box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-.range::-moz-range-thumb {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 9999px;
-  background: #fff;
-  border: 0;
-  box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-.range:focus-visible { outline: 2px solid #818cf8; outline-offset: 6px; }
-
-/* Длинный аудит прокручивается внутри своего блока, тень внизу подсказывает, что текст продолжается */
-.report-scroll {
-  mask-image: linear-gradient(#000 85%, transparent);
-}
-@media (min-width: 640px) {
-  .report-scroll { mask-image: none; }
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0.5; transform: translateY(4px); }
   to { opacity: 1; transform: none; }
 }
 .fade-in { animation: fade-in 0.35s ease-out both; }
 @media (prefers-reduced-motion: reduce) {
   .fade-in { animation: none; }
-}
-
-@media print {
-  .no-print, .backdrop { display: none !important; }
-  body { background: #fff; color: #0f172a; }
-  main { padding: 0 !important; }
-  .grid { display: block !important; }
-  .print-light { background: #fff !important; color: #0f172a !important; box-shadow: none !important; border: 0 !important; }
-  .print-light * { color: #0f172a !important; }
-  .report p, .report li { color: #1e293b !important; }
-  .report-scroll { max-height: none !important; overflow: visible !important; mask-image: none !important; }
 }

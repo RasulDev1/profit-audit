@@ -4,8 +4,8 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Аудит скрытых потерь прибыли",
-  description: "Сервис показывает, где бизнес теряет прибыль из-за ручного учёта клиентов",
+  title: "Калькулятор синергии продаж",
+  description: "Примерный расчёт прироста выручки от автоматизации продаж в Instagram",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
