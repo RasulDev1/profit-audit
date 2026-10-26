@@ -1,6 +1,6 @@
 export const DAYS_IN_MONTH = 30;
 
-export type ToolId = "comments" | "checkout" | "reactivation";
+export type ToolId = "comments" | "checkout" | "tracking";
 
 export type Tool = {
   id: ToolId;
@@ -23,10 +23,11 @@ export const TOOLS: Tool[] = [
     description: "Диалог чаще превращается в оплату: СБП и авторасчёт доставки.",
   },
   {
-    id: "reactivation",
-    title: "Бот-реаниматор / Дожимы",
-    badge: "конверсия +15%",
-    description: "Возвращает брошенные корзины и запускает автоматические повторные продажи.",
+    id: "tracking",
+    title: "Бот для трекинга и разгрузки Директа",
+    badge: "выручка +10%",
+    description:
+      "Сам выдаёт трек-номер и статус доставки, защищая Директ от вопросов «Где мой заказ?». Кнопка «Перейти в магазин» возвращает лояльных клиентов на сайт без затрат на рекламу.",
   },
 ];
 
@@ -67,18 +68,20 @@ export const DEFAULT_INPUTS: RangeInputs = {
   baseConversion: { from: 8, to: 12 },
 };
 
+export const TRACKING_REVENUE_MULTIPLIER = 1.1;
+
 export function calculate(inputs: Inputs, tools: ToolState): Result {
   const baseConversion = inputs.baseConversion / 100;
   const newLeadsPerDay = tools.comments ? inputs.leadsPerDay * 2 : inputs.leadsPerDay;
 
   let newConversion = baseConversion;
   if (tools.checkout) newConversion *= 1.35;
-  if (tools.reactivation) newConversion *= 1.15;
 
   const currentLeads = inputs.leadsPerDay * DAYS_IN_MONTH;
   const newLeads = newLeadsPerDay * DAYS_IN_MONTH;
   const currentRevenue = currentLeads * baseConversion * inputs.averageCheck;
-  const newRevenue = newLeads * newConversion * inputs.averageCheck;
+  const funnelRevenue = newLeads * newConversion * inputs.averageCheck;
+  const newRevenue = tools.tracking ? funnelRevenue * TRACKING_REVENUE_MULTIPLIER : funnelRevenue;
   const gain = newRevenue - currentRevenue;
 
   return {

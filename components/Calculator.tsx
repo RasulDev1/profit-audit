@@ -46,7 +46,7 @@ function toInputs(fields: Fields): RangeInputs {
 
 export default function Calculator() {
   const [fields, setFields] = useState<Fields>(() => toFields(DEFAULT_INPUTS));
-  const [tools, setTools] = useState<ToolState>({ comments: false, checkout: false, reactivation: false });
+  const [tools, setTools] = useState<ToolState>({ comments: false, checkout: false, tracking: false });
 
   const inputs = useMemo(() => toInputs(fields), [fields]);
   const result = useMemo(() => calculateRange(inputs, tools), [inputs, tools]);
@@ -92,7 +92,7 @@ export default function Calculator() {
           <p className="mt-4 break-words font-mono text-sm text-zinc-500">
             {formatSpan(formatNumber(result.low.newLeads), formatNumber(result.high.newLeads))} лидов ×{" "}
             {formatSpan(formatPercent(result.low.newConversion), formatPercent(result.high.newConversion))} ×{" "}
-            {formatSpan(formatNumber(checkLow), formatNumber(checkHigh))} ₽ ={" "}
+            {formatSpan(formatNumber(checkLow), formatNumber(checkHigh))} ₽{tools.tracking && " × 1,1"} ={" "}
             {formatSpan(formatNumber(result.low.newRevenue), formatNumber(result.high.newRevenue))} руб.
           </p>
           <p className="mt-3 text-xs text-zinc-600">Расчёт примерный и показывает порядок цифр, а не гарантию результата.</p>
