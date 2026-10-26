@@ -1,27 +1,35 @@
 @import "tailwindcss";
 
+/* Цвета и шрифт как на сайте «Автоматизация Бизнеса» (репозиторий Techno-Business) */
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: var(--font-manrope), "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-manrope), "Segoe UI", system-ui, sans-serif;
+  --color-canvas: #f4f6f9;
+  --color-surface: #ffffff;
+  --color-line: #e2e8f0;
+  --color-line-strong: #cbd5e1;
+  --color-ink: #1e293b;
+  --color-muted: #55657c;
+  --color-faint: #66768c;
+  --color-accent: #2563eb;
+  --color-accent-dark: #1d4ed8;
+  --color-accent-soft: #eff4ff;
+  --color-cta: #f97316;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  background: #07090c;
-  color: #f4f4f5;
+  background: var(--color-canvas);
+  color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
-.backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(ellipse at top right, rgba(16, 185, 129, 0.12), transparent 55%);
+::selection {
+  background: #cddcfd;
 }
 
 input[type="number"]::-webkit-inner-spin-button,

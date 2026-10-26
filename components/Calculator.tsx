@@ -60,11 +60,11 @@ export default function Calculator() {
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-8">
-      <section className="flex flex-col gap-8 rounded-3xl border border-zinc-800 bg-zinc-950/70 p-5 sm:p-8">
+      <section className="flex flex-col gap-8 rounded-xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgb(15_23_42/.04),0_8px_24px_-12px_rgb(15_23_42/.12)] sm:p-8">
         <div>
-          <h2 className="mb-1 text-lg font-bold text-zinc-300 sm:text-xl">Исходные данные</h2>
-          <p className="mb-5 text-sm text-zinc-500">Укажите примерный диапазон: от и до</p>
-          <div className="flex flex-col gap-4">
+          <h2 className="mb-1 text-xl font-semibold tracking-tight text-ink sm:text-2xl">Исходные данные</h2>
+          <p className="mb-6 text-sm text-muted">Укажите примерный диапазон: от и до</p>
+          <div className="flex flex-col gap-5">
             <RangeField label="Лидов в Директ в день" {...fields.leadsPerDay} onChange={setField("leadsPerDay")} />
             <RangeField label="Средний чек" suffix="₽" step={100} {...fields.averageCheck} onChange={setField("averageCheck")} />
             <RangeField label="Конверсия сейчас" suffix="%" step={0.5} {...fields.baseConversion} onChange={setField("baseConversion")} />
@@ -72,7 +72,7 @@ export default function Calculator() {
         </div>
 
         <div>
-          <h2 className="mb-5 text-lg font-bold text-zinc-300 sm:text-xl">Подключить инструменты</h2>
+          <h2 className="mb-5 border-t border-line pt-8 text-xl font-semibold tracking-tight text-ink sm:text-2xl">Подключить инструменты</h2>
           <div className="flex flex-col gap-3">
             {TOOLS.map((tool) => (
               <ToolSwitch key={tool.id} tool={tool} on={tools[tool.id]} onToggle={() => toggle(tool.id)} />
@@ -84,18 +84,18 @@ export default function Calculator() {
       <section className="flex flex-col gap-6">
         <ResultPanel result={result} />
 
-        <div className="rounded-3xl border border-zinc-800 bg-zinc-950/70 p-6 sm:p-8">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[.2em] text-zinc-500 sm:text-sm">Физика синергии</div>
-          <p key={summary.key} className="fade-in text-xl font-semibold leading-snug text-zinc-100 sm:text-2xl">
+        <div className="rounded-xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgb(15_23_42/.04),0_8px_24px_-12px_rgb(15_23_42/.12)] sm:p-8">
+          <div className="mb-3 text-xs font-medium uppercase tracking-[.12em] text-faint sm:text-sm">Физика синергии</div>
+          <p key={summary.key} className="fade-in text-xl font-medium leading-snug tracking-tight text-ink sm:text-2xl">
             {summary.text}
           </p>
-          <p className="mt-4 break-words font-mono text-sm text-zinc-500">
+          <p className="mt-5 break-words rounded-lg bg-canvas px-4 py-3 text-sm tabular-nums text-muted">
             {formatSpan(formatNumber(result.low.newLeads), formatNumber(result.high.newLeads))} лидов ×{" "}
             {formatSpan(formatPercent(result.low.newConversion), formatPercent(result.high.newConversion))} ×{" "}
             {formatSpan(formatNumber(checkLow), formatNumber(checkHigh))} ₽{tools.tracking && " × 1,1"} ={" "}
             {formatSpan(formatNumber(result.low.newRevenue), formatNumber(result.high.newRevenue))} руб.
           </p>
-          <p className="mt-3 text-xs text-zinc-600">Расчёт примерный и показывает порядок цифр, а не гарантию результата.</p>
+          <p className="mt-3 text-xs text-faint">Расчёт примерный и показывает порядок цифр, а не гарантию результата.</p>
         </div>
       </section>
     </div>

@@ -13,11 +13,11 @@ function Amount({ low, high, className }: { low: string; high: string; className
   return (
     <div className={className}>
       <div>
-        <span className="mr-[.25em] text-[.45em] font-semibold opacity-60">от</span>
+        <span className="mr-[.25em] text-[.4em] font-medium opacity-70">от</span>
         {low}
       </div>
       <div>
-        <span className="mr-[.25em] text-[.45em] font-semibold opacity-60">до</span>
+        <span className="mr-[.25em] text-[.4em] font-medium opacity-70">до</span>
         {high} руб.
       </div>
     </div>
@@ -37,29 +37,29 @@ function StatCard({
   conversion: [number, number];
   accent?: boolean;
 }) {
-  const valueColor = accent ? "text-emerald-300" : "text-zinc-200";
+  const valueColor = accent ? "text-accent" : "text-ink";
   return (
     <div
-      className={`rounded-3xl border p-5 sm:p-7 ${
-        accent ? "border-emerald-500/40 bg-emerald-500/[.06]" : "border-zinc-800 bg-zinc-950/70"
+      className={`rounded-xl border p-5 shadow-[0_1px_2px_rgb(15_23_42/.04),0_8px_24px_-12px_rgb(15_23_42/.12)] sm:p-7 ${
+        accent ? "border-accent/40 bg-accent-soft" : "border-line bg-surface"
       }`}
     >
-      <div className={`mb-3 text-sm font-semibold sm:text-base ${accent ? "text-emerald-300" : "text-zinc-400"}`}>{title}</div>
+      <div className={`mb-3 text-xs font-medium uppercase tracking-[.1em] sm:text-sm ${accent ? "text-accent" : "text-faint"}`}>{title}</div>
       <Amount
         low={formatNumber(revenue[0])}
         high={formatNumber(revenue[1])}
-        className="break-words text-3xl font-extrabold leading-tight tracking-tight text-white xl:text-4xl"
+        className={`break-words text-3xl font-semibold leading-tight tracking-tight tabular-nums xl:text-4xl ${valueColor}`}
       />
-      <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+      <div className="mt-5 grid grid-cols-2 gap-3 border-t border-line pt-4 text-sm">
         <div>
-          <div className="text-zinc-500">Лидов / мес</div>
-          <div className={`font-mono text-lg font-bold ${valueColor}`}>
+          <div className="text-faint">Лидов / мес</div>
+          <div className={`text-lg font-semibold tabular-nums ${valueColor}`}>
             {formatSpan(formatNumber(leads[0]), formatNumber(leads[1]))}
           </div>
         </div>
         <div>
-          <div className="text-zinc-500">Конверсия</div>
-          <div className={`font-mono text-lg font-bold ${valueColor}`}>
+          <div className="text-faint">Конверсия</div>
+          <div className={`text-lg font-semibold tabular-nums ${valueColor}`}>
             {formatSpan(formatPercent(conversion[0]), formatPercent(conversion[1]))}
           </div>
         </div>
@@ -74,21 +74,21 @@ export default function ResultPanel({ result }: Props) {
   return (
     <>
       <div
-        className={`rounded-3xl bg-gradient-to-br from-emerald-400 to-emerald-600 p-6 text-zinc-950 shadow-[0_0_0_1px_rgba(16,185,129,.35),0_30px_80px_-20px_rgba(16,185,129,.45)] transition-opacity sm:p-10 ${
+        className={`rounded-xl bg-accent p-6 text-white shadow-[0_20px_50px_-24px_rgb(37_99_235/.8)] transition-opacity sm:p-10 ${
           high.gain > 0 ? "" : "opacity-60"
         }`}
       >
-        <div className="mb-3 text-base font-bold uppercase tracking-wider opacity-80 sm:text-xl">Чистый прирост выручки в месяц</div>
+        <div className="mb-4 text-sm font-medium uppercase tracking-[.12em] text-white/80 sm:text-base">Чистый прирост выручки в месяц</div>
         <Amount
           low={signed(low.gain)}
           high={signed(high.gain)}
-          className="break-words text-[clamp(2.25rem,5vw,5rem)] font-extrabold leading-none tracking-tight"
+          className="break-words text-[clamp(2.25rem,5vw,5rem)] font-semibold leading-[1.05] tracking-[-0.025em] tabular-nums"
         />
-        <div className="mt-5 flex flex-wrap gap-2 text-sm font-semibold sm:text-base">
-          <span className="rounded-full bg-zinc-950/15 px-3 py-1">
+        <div className="mt-6 flex flex-wrap gap-2 text-sm font-medium sm:text-base">
+          <span className="rounded-md bg-white/15 px-3 py-1">
             {formatSpan(signed(low.gainPercent), signed(high.gainPercent))}% к выручке
           </span>
-          <span className="rounded-full bg-zinc-950/15 px-3 py-1">
+          <span className="rounded-md bg-white/15 px-3 py-1">
             {low.gain === high.gain
               ? `${signed(low.gain * 12)} руб. за год`
               : `от ${signed(low.gain * 12)} до ${signed(high.gain * 12)} руб. за год`}
