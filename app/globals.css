@@ -32,6 +32,16 @@ body {
   background: #cddcfd;
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 /* Двойной ползунок: два накладываются друг на друга, ловят касание только бегунки */
 .dual-range {
   position: absolute;

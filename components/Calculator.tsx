@@ -22,9 +22,6 @@ import ToolSwitch from "./ToolSwitch";
 
 const CARD = "shadow-[0_1px_2px_rgb(15_23_42/.04),0_8px_24px_-12px_rgb(15_23_42/.12)]";
 
-const formatCheck = (value: number) => `${formatNumber(value)} ₽`;
-const formatConversion = (value: number) => `${String(value).replace(".", ",")}%`;
-
 export default function Calculator() {
   const [inputs, setInputs] = useState<RangeInputs>(DEFAULT_INPUTS);
   const [tools, setTools] = useState<ToolState>({ comments: false, checkout: false, tracking: false });
@@ -63,27 +60,26 @@ export default function Calculator() {
         <div className="flex flex-col gap-6">
           <section className={`rounded-xl border border-line bg-surface p-5 sm:p-8 ${CARD}`}>
             <h2 className="mb-1 text-xl font-semibold tracking-tight text-ink sm:text-2xl">Исходные данные</h2>
-            <p className="mb-6 text-sm text-muted">Двигайте ползунки: примерный диапазон</p>
+            <p className="mb-6 text-sm text-muted">Двигайте ползунки или впишите значения вручную</p>
             <div className="flex flex-col gap-5">
               <RangeSlider
                 label="Лидов в Директ в день"
                 {...SLIDER_LIMITS.leadsPerDay}
                 {...inputs.leadsPerDay}
-                format={formatNumber}
                 onChange={setRange("leadsPerDay")}
               />
               <RangeSlider
                 label="Средний чек"
+                suffix="₽"
                 {...SLIDER_LIMITS.averageCheck}
                 {...inputs.averageCheck}
-                format={formatCheck}
                 onChange={setRange("averageCheck")}
               />
               <RangeSlider
                 label="Конверсия сейчас"
+                suffix="%"
                 {...SLIDER_LIMITS.baseConversion}
                 {...inputs.baseConversion}
-                format={formatConversion}
                 onChange={setRange("baseConversion")}
               />
             </div>
